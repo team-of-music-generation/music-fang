@@ -31,7 +31,8 @@ mdd_crawler/
     ├── 01_raw/bilibili/*.jsonl, zhihu/*.jsonl, douyin/*.jsonl
     ├── 02_clean/comments_clean.csv     # ★ 清洗后统一表
     ├── 03_llm/                          # 开发者B：三元组/聚类/机会（后续环节）
-    └── 04_report/
+    ├── 04_report/
+    └── _backup_old/                     # 旧数据本地留底（已忽略，不上传）
 ```
 
 ## 在 PyCharm 中运行
@@ -83,6 +84,19 @@ is_sub_reply, root_comment_id, collect_time, collector, source_type, error
 **旧版清洗统一表字段（已被中文表头替代）**：
 uid, platform, account_name, content_url, text, publish_time, like_count,
 is_valid, clean_reason, collector
+
+## 关于 `mdd/_backup_old/`
+
+该目录用于**本地留底**，存放阶段一早期的旧版抓取/清洗结果，例如
+`*_20261117.jsonl`（按账号归档的原始评论）和 `comments_clean_old.csv`（旧字段版清洗表）。
+它不参与当前脚本的读写：现行流程以 `mdd/01_raw/` → `mdd/02_clean/` 为准，
+`config.py` 的 `ensure_dirs()` 只重建 `00_meta`、`01_raw/bilibili`、`01_raw/zhihu`、
+`02_clean`、`03_llm`、`04_report`，**不会**自动重建 `_backup_old/`。
+
+- **内容敏感度**：含评论原文和账号昵称，属于不应对外传播的数据。
+- **上传策略**：`.gitignore` 中已通过 `mdd/_backup_old/` 忽略该目录，
+  因此它**不会被提交到 GitHub**，公开分支只保留代码和 `mdd/00_meta/` 元数据。
+- **使用方式**：仅在本地回溯、对照旧结果时手动取用；不要 `git add -f` 强制加入。
 
 ## 合规
 
